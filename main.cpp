@@ -4,7 +4,9 @@
 
 //The file where all the accounts will be stored
 std::ifstream fin("accounts.json");
-std::ofstream fout("accounts.json");
+
+//open the file in append mode
+std::ofstream fout("accounts.json", std::ios_base::app);
 
 class AcessManager {
     public:
@@ -24,6 +26,7 @@ class AcessManager {
             set_eUsername(username);
             set_ePassword(password);
 
+            fout << username << " " << password << "\n";
         }
 
         void LoginIn() {
@@ -68,7 +71,7 @@ int main() {
     std::cin >> choice;
 
     if(choice == 0) {
-        std::cout << "Signup!\n";
+        AcessManagerObj.SignUp();
     }
     else if(choice == 1) {
         std::cout << "Log In!\n";
