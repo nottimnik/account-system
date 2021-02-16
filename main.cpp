@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<map>
+#include<vector>
 
 //The file where all the accounts will be stored
 std::ifstream fin("accounts.json");
@@ -15,7 +16,7 @@ class AcessManager {
             //The username and the password the account will have
             std::string username, password;
 
-            //We give instroctions to the user on how to create the account
+            //We give instructions to the user on how to create the account
             std::cout << "\nCreate a new account:\n";
             std::cout << "Username: ";
             std::cin >> username;
@@ -23,30 +24,74 @@ class AcessManager {
             std::cin >> password;
 
             //Sets the given username and passwords as the eUsername and ePassword
-            set_eUsername(username);
-            set_ePassword(password);
 
             fout << username << " " << password << "\n";
         }
 
         void LoginIn() {
 
+            //The username and the password that the user entered
+            std::string username, password;
+
+            //See if the user is loggedin or not
+            bool loggedin = false;
+
+            //We create the map with all the accounts and passwords
+            create_vectors();
+
+            //We give instructions to the user on how to log in the account
+            std::cout << "\nLogin In your account:\n";
+            std::cout << "Username: ";
+            std::cin >> username; //the username that the user entered
+            std::cout << "Password: ";
+            std::cin >> password; //the password that the user entered
+
+            int size = accounts_number(); //the number of the accounts
+            
+            //searches for a account that has the username, that the user entered
+            for(int i = 0;i<size;++i) {
+                if(username == usernames[i]) {
+                    if(password == passwords[i]) {
+                        std::cout << "Welcome, " + username + "! You sucessfully logged in your account.";
+                        loggedin = true;
+                        break;
+                    }
+                }
+            }
+
+            if(loggedin == false) {
+                std::cout << "The Username or the Password that you have entered are wrong! Please try again.";
+            }
         }
 
-        void set_eUsername (std::string Username) {
-            eUsername = Username;
+        //creates the usernames and the passwords vectors
+        void create_vectors() {
+            std::string username, password;
+            while(fin>>username && fin>>password) {
+                insert_username(username); //insert the username read from the file into the vector
+                insert_password(password); //insert the password read from the file into the vector
+            }
         }
 
-        void set_ePassword (std::string Password) {
-            ePassword = Password;
-        } 
+        //returns the numbers of the accountts in the file
+        int accounts_number() {
+            return usernames.size();
+        }
+
+        //inserts a new element in the usernames vector
+        void insert_username(std::string username) {
+            usernames.push_back(username);
+        }
+
+        //inserts a new element in the passwords vector
+        void insert_password(std::string password) {
+            passwords.push_back(password);
+        }
 
     private:
-        std::map <std::string, std::string> accounts;
-        
-        //The username and password entered by the user
-        std::string eUsername;
-        std::string ePassword;
+
+        std::vector <std::string> usernames; //all the usernames of the existing accounts
+        std::vector <std::string> passwords; //all the passwords of the existing accounts
 
 };
 
@@ -71,10 +116,10 @@ int main() {
     std::cin >> choice;
 
     if(choice == 0) {
-        AcessManagerObj.SignUp();
+        AcessManagerObj.SignUp(); //Lets the user create a new account
     }
     else if(choice == 1) {
-        std::cout << "Log In!\n";
+        AcessManagerObj.LoginIn();
     }
 
     //While the user enters a invalid choice we will notice him and give him another chance to choose
@@ -104,10 +149,11 @@ int main() {
         */
 
         if(choice == 0) {
-            std::cout << "Sign Up!\n";
+            AcessManagerObj.SignUp(); //Lets the user create a account
         }
         else {
-            std::cout << "Login In!\n";
+            AcessManagerObj.LoginIn();
         }
     }
+    return 0;
 }
